@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.projet.SecondaryController">
+   <children>
+      <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0">
+         <children>
+            <TabPane prefHeight="600.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE">
+               <tabs>
+                  <Tab text="Comptes">
+                     <content>
+                        <AnchorPane prefHeight="572.0" prefWidth="897.0">
+                           <children>
+                              <TableView fx:id="tableView" layoutX="24.0" layoutY="65.0" prefHeight="435.0" prefWidth="845.0">
+                                 <columns>
+                                    <TableColumn fx:id="idColumn" maxWidth="-1.0" minWidth="30.0" prefWidth="-1.0" text="Id" />
+                                    <TableColumn fx:id="nomColumn" maxWidth="-1.0" minWidth="180.0" prefWidth="-1.0" text="Nom" />
+                                    <TableColumn fx:id="prenomColumn" maxWidth="-1.0" minWidth="170.0" prefWidth="-1.0" text="Prenom" />
+                                    <TableColumn fx:id="loginColumn" maxWidth="-1.0" minWidth="150.0" prefWidth="-1.0" text="Login" />
+                                    <TableColumn fx:id="roleColumn" maxWidth="-1.0" minWidth="100.0" prefWidth="-1.0" text="Role" />
+                                    <TableColumn fx:id="statusColumn" maxWidth="-1.0" minWidth="100.0" prefWidth="-1.0" text="Status" />
+                                    <TableColumn maxWidth="166.0" minWidth="-1.0" prefWidth="115.0" text="Action" />
+                                 </columns>
+                              </TableView>
+                              <Button fx:id="nouveauUser1" layoutX="759.0" layoutY="14.0" mnemonicParsing="false" onAction="#addUser" prefHeight="37.0" prefWidth="133.0" style="-fx-background-color: #1e293b;" text="Nouveau" textFill="WHITE">
+                                 <font>
+                                    <Font name="Cascadia Code" size="18.0" />
+                                 </font>
+                              </Button>
+                              <Pagination layoutX="754.0" layoutY="506.0" maxPageIndicatorCount="2" nodeOrientation="LEFT_TO_RIGHT" pageCount="2" prefHeight="59.0" prefWidth="142.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+                  <Tab text="Clients">
+                     <content>
+                        <AnchorPane prefHeight="572.0" prefWidth="897.0">
+                           <children>
+                              <TableView fx:id="tableView2" layoutX="24.0" layoutY="65.0" prefHeight="435.0" prefWidth="845.0">
+                                 <columns>
+                                    <TableColumn fx:id="idColumn2" maxWidth="-1.0" minWidth="30.0" prefWidth="-1.0" text="Id" />
+                                    <TableColumn fx:id="surnomColumn" maxWidth="-1.0" minWidth="250.0" prefWidth="-1.0" text="Surnom" />
+                                    <TableColumn fx:id="adresseColumn" maxWidth="-1.0" minWidth="250.0" prefWidth="-1.0" text="Adresse" />
+                                    <TableColumn fx:id="telephoneColumn" maxWidth="-1.0" minWidth="200.0" prefWidth="-1.0" text="Téléphone" />
+                                    <TableColumn maxWidth="166.0" minWidth="-1.0" prefWidth="115.0" text="Action" />
+                                 </columns>
+                              </TableView>
+                              <Button fx:id="nouveauClient" layoutX="759.0" layoutY="14.0" mnemonicParsing="false" onAction="#addClient" prefHeight="37.0" prefWidth="133.0" style="-fx-background-color: #1e293b;" text="Nouveau" textFill="WHITE">
+                                 <font>
+                                    <Font name="Cascadia Code" size="18.0" />
+                                 </font>
+                              </Button>
+                              <Pagination layoutX="754.0" layoutY="506.0" maxPageIndicatorCount="2" nodeOrientation="LEFT_TO_RIGHT" pageCount="2" prefHeight="59.0" prefWidth="142.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+         </children>
+      </Pane>
+   </children>
+</VBox>
