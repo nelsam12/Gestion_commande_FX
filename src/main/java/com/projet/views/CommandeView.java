@@ -33,7 +33,7 @@ public class CommandeView extends BorderPane {
     private final Button btnAjouter = new Button("Ajouter à la commande");
 
     private final TableView<LigneCommande> tableLignes = new TableView<>();
-   
+
     private final Button btnValider = new Button("Valider");
 
     private final Label lblTotal = new Label("Total: 0.00 €");
@@ -88,7 +88,6 @@ public class CommandeView extends BorderPane {
         btnAjouter.setOnMouseExited(e -> btnAjouter
                 .setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-padding: 8 16; -fx-cursor: hand;"));
 
-       
         btnValider
                 .setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-padding: 8 16; -fx-cursor: hand;");
 
@@ -157,14 +156,83 @@ public class CommandeView extends BorderPane {
         setCommandeSectionDisabled(true);
     }
 
-    protected Object supprimerLigneCommande(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'supprimerLigneCommande'");
+    protected void supprimerLigneCommande(int index) {
+        // Vérifier si l'index est valide
+        if (index >= 0 && index < lignesCommande.size()) {
+            // Récupérer la ligne à supprimer
+            LigneCommande ligne = lignesCommande.get(index);
+
+            // Rétablir la quantité disponible de l'article
+            Article article = ligne.getArticle();
+            article.setQuantiteDisponible(article.getQuantiteDisponible() + ligne.getQuantite());
+
+            // Supprimer la ligne de la liste
+            lignesCommande.remove(index);
+
+            // Supprimer la ligne de la commande
+            commande.removeLigneCommande(ligne);
+
+            // Actualiser le total
+            actualiserTotal();
+
+            // Optionnel : Afficher un message de confirmation
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Ligne supprimée");
+            alert.setContentText("La ligne de commande a été supprimée avec succès.");
+            alert.showAndWait();
+        }
     }
 
-    protected Object modifierLigneCommande(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'modifierLigneCommande'");
+    protected void modifierLigneCommande(int index) {
+        // Vérifier si l'index est valide
+        if (index >= 0 && index < lignesCommande.size()) {
+            // Récupérer la ligne à modifier
+            LigneCommande ligne = lignesCommande.get(index);
+
+            // Créer un formulaire ou une boîte de dialogue pour modifier la ligne
+            // Par exemple, vous pouvez modifier la quantité ou le prix
+            TextInputDialog dialog = new TextInputDialog(String.valueOf(ligne.getQuantite()));
+            dialog.setTitle("Modifier la ligne");
+            dialog.setHeaderText("Modifier la quantité");
+            dialog.setContentText("Nouvelle quantité :");
+
+            dialog.showAndWait().ifPresent(newQuantite -> {
+                try {
+                    // Convertir la quantité en entier
+                    int quantite = Integer.parseInt(newQuantite);
+
+                    if (quantite > 0 && quantite <= ligne.getArticle().getQuantiteDisponible() + ligne.getQuantite()) {
+                        // Mettre à jour la quantité de la ligne et réajuster l'article
+                        int difference = quantite - ligne.getQuantite();
+                        ligne.setQuantite(quantite);
+
+                        // Réajuster la quantité disponible de l'article
+                        ligne.getArticle()
+                                .setQuantiteDisponible(ligne.getArticle().getQuantiteDisponible() - difference);
+
+                        // Actualiser le total de la ligne
+
+                        actualiserTotal();
+
+                        // Forcer la mise à jour de la vue pour cette ligne spécifique
+                        tableLignes.refresh();
+
+                        // Optionnel : Afficher un message de confirmation
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Ligne modifiée");
+                        alert.setContentText("La ligne de commande a été modifiée avec succès.");
+                        alert.showAndWait();
+                    } else {
+                        // Si la quantité est invalide, afficher un message d'erreur
+                        afficherErreur("Quantité invalide",
+                                "La quantité doit être positive et ne pas dépasser le stock disponible.");
+                    }
+                } catch (NumberFormatException e) {
+                    // Si l'utilisateur saisit une valeur non valide
+                    afficherErreur("Erreur de saisie", "Veuillez entrer une quantité valide.");
+                }
+            });
+        }
     }
 
     private void setupLayout() {
@@ -224,6 +292,9 @@ public class CommandeView extends BorderPane {
                 commande.setTotal(total); // Assurez-vous que la commande a un attribut `total` pour stocker le total de
                                           // la commande.
                 commandeService.save(commande); // Sauvegarder la commande validée dans la base de données
+                for (LigneCommande ligneCommande : commande.getLignes()) {
+                    articleService.updateArticleQuantite(ligneCommande.getArticle());
+                }
 
                 // Vous pouvez aussi enregistrer les lignes de commande associées si nécessaire
                 for (LigneCommande ligne : lignesCommande) {
@@ -239,6 +310,13 @@ public class CommandeView extends BorderPane {
                 // Désactiver les champs après validation
                 setCommandeSectionDisabled(true);
                 commande = null;
+                // Rénitialiser la vue
+                tfTelephone.clear();
+                cbArticles.setValue(null);
+                tfQuantite.clear();
+                tfPrix.clear();
+                lignesCommande.clear();
+                lblTotal.setText("Total: 0.00");
             } else {
                 afficherErreur("Erreur", "La commande doit contenir au moins une ligne.");
             }
@@ -321,7 +399,7 @@ public class CommandeView extends BorderPane {
         tfPrix.setDisable(disabled);
         btnAjouter.setDisable(disabled);
         tableLignes.setDisable(disabled);
-       
+
         btnValider.setDisable(disabled);
     }
 

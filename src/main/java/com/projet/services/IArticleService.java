@@ -7,4 +7,5 @@ import com.projet.entities.Article;
 public interface IArticleService {
     void save(Article article);
     List<Article> getAllArticles();
+    void updateArticleQuantite(Article article);
 }

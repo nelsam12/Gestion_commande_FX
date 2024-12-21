@@ -17,9 +17,7 @@ public class ArticleService implements IArticleService {
         return null;
     }
 
-    public void updateQuantite(Long id, int quantite) {
-       
-    }
+   
 
     @Override
     public void save(Article article) {
@@ -29,5 +27,10 @@ public class ArticleService implements IArticleService {
     @Override
     public List<Article> getAllArticles() {
        return articleRepository.findAll();
+    }
+
+    @Override
+    public void updateArticleQuantite(Article article) {
+        articleRepository.updateArticleQuantite(article);
     }
 }

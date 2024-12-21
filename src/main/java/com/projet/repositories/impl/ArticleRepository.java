@@ -13,5 +13,10 @@ public class ArticleRepository extends Repository<Article> implements IArticleRe
        
     }
 
+    @Override
+    public void updateArticleQuantite(Article article) {
+       update(article);
+    }
+
 
 }

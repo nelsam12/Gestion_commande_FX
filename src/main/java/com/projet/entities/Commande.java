@@ -85,6 +85,13 @@ public class Commande {
         }
     }
 
+    public void removeLigneCommande(LigneCommande ligneCommande){
+        if (ligneCommande!= null && lignes.contains(ligneCommande)) {
+            lignes.remove(ligneCommande);
+            ligneCommande.setCommande(null);
+        }
+    }
+
     @Override
     public String toString() {
         return "Commande [id=" + id + ", date=" + date + ", total=" + total + "]";
