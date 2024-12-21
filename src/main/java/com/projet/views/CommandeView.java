@@ -115,11 +115,14 @@ public class CommandeView extends BorderPane {
 
         TableColumn<LigneCommande, Integer> colQuantite = new TableColumn<>("Quantité");
         colQuantite.setCellValueFactory(new PropertyValueFactory<>("quantite"));
+        TableColumn<LigneCommande, Double> colTotal = new TableColumn<>("Total");
 
         TableColumn<LigneCommande, Double> colPrix = new TableColumn<>("Prix unitaire");
         colPrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
 
-        TableColumn<LigneCommande, Double> colTotal = new TableColumn<>("Total");
+
+        
+       
         colTotal.setCellValueFactory(param -> new SimpleDoubleProperty(param.getValue().getTotal()).asObject());
         TableColumn<LigneCommande, Void> colActions = new TableColumn<>("Actions");
         // Créer une cellule avec les boutons Modifier et Supprimer
@@ -368,15 +371,40 @@ public class CommandeView extends BorderPane {
             double prix = Double.parseDouble(tfPrix.getText());
 
             if (article != null && quantite > 0 && prix > 0) {
-                if (quantite <= article.getQuantiteDisponible()) {
-                    LigneCommande ligne = new LigneCommande(article, quantite, prix);
-                    lignesCommande.add(ligne);
-                    article.setQuantiteDisponible(article.getQuantiteDisponible() - quantite);
-                    commande.addLigneCommande(ligne);
-                    viderChampsArticle();
-                } else {
-                    afficherErreur("Quantité non disponible", "La quantité demandée dépasse le stock disponible.");
+                // Vérifier si l'article est déjà présent dans la commande
+                boolean articleExistant = false;
+                for (LigneCommande ligne : lignesCommande) {
+                    if (ligne.getArticle().equals(article)) {
+                        // Si l'article existe déjà, on met à jour la quantité
+                        ligne.setQuantite(ligne.getQuantite() + quantite); // Ajouter la quantité à l'existante
+                        articleExistant = true;
+                        break;
+                    }
                 }
+
+                if (!articleExistant) {
+                    // Si l'article n'est pas encore dans la commande, on l'ajoute
+                    if (quantite <= article.getQuantiteDisponible()) {
+                        LigneCommande ligne = new LigneCommande(article, quantite, prix);
+                        lignesCommande.add(ligne);
+                        article.setQuantiteDisponible(article.getQuantiteDisponible() - quantite); // Mettre à jour la
+                                                                                                   // quantité
+                                                                                                   // disponible de
+                                                                                                   // l'article
+                        commande.addLigneCommande(ligne); // Ajouter la ligne de commande à la commande
+                        viderChampsArticle(); // Réinitialiser les champs
+                    } else {
+                        afficherErreur("Quantité non disponible", "La quantité demandée dépasse le stock disponible.");
+                    }
+                } else {
+                    // Si l'article a été mis à jour, afficher un message
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Quantité mise à jour");
+                    alert.setContentText("La quantité de l'article a été mise à jour.");
+                    alert.showAndWait();
+                }
+                 // Forcer la mise à jour de la vue pour cette ligne spécifique
+                 tableLignes.refresh();
             }
         } catch (NumberFormatException e) {
             afficherErreur("Erreur de saisie", "Veuillez vérifier les valeurs saisies.");
